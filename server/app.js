@@ -4,18 +4,9 @@ const dotenv = require("dotenv");
 const app = express();
 
 dotenv.config({path:"./config.env"});
-const DB = process.env.DATABASE;
 const PORT = process.env.PORT;
 
-mongoose.connect(DB,{
-    useNewUrlParser: true,
-})
-.then(()=>{
-    console.log("MongoDB Connection Successful");
-})
-.catch((err)=>{
-    console.log(err);
-})
+require("./db/conn");
 
 app.get("/",(req,res)=>{
     res.send("Hello World!")
