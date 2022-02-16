@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bycrpt = require("bcrypt");
 
 require("../db/conn");
 const User = require("../models/userSchema");
@@ -35,19 +36,20 @@ router.post("/register",async (req,res)=>{
 });
 
 router.post("/sigin",async (req,res)=>{
-    const {email,password} = req.body;
-    if(!email || !password){
-        return res.status(422).json({message:"Fill all the required fields"});
-    }
     try{
+        const {email,password} = req.body;
+        if(!email || !password){
+            return res.status(422).json({message:"Fill all the required fields"});
+        }
         const userExist = await User.findOne({email:email});
         if(userExist){
-           if(password === userExist.password){
-            return res.status(201).json({message:"Login successfully"})
+           const isMatch = await bycrpt.compare(password, userExist.password);
+           if(isMatch){
+               return res.status(201).json({message:"User Logged in Successfully"})
            }
-        return res.status(422).json({message:"Invalid username or password"});
+           return res.status(422).json({message:"Invalid Credentials"});
         }
-        return res.status(422).json({message:"User is not registered"});
+        return res.status(422).json({message:"User does not exist"});
     }
     catch(err){
         console.log(err);
