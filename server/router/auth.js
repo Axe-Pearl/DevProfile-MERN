@@ -29,4 +29,22 @@ router.post("/register",async (req,res)=>{
     }
     
 });
+
+router.post("/sigin",(req,res)=>{
+    const {email,password} = req.body;
+    if(!email || !password){
+        return res.status(422).json({message:"Fill all the required fields"});
+    }
+    User.findOne({email:email})
+    .then((userExist)=>{
+        if(userExist){
+           if(password === userExist.password){
+               return res.status(200).json({message:"Login successfully"});
+           }
+           return res.status(422).json({message:"Invalid username or password"});
+        }
+        return res.status(422).json({message:"User is not registered"});
+    })
+});
+
 module.exports = router;
