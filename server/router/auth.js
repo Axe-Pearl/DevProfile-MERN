@@ -18,9 +18,13 @@ router.post("/register",async (req,res)=>{
         if(userExist){
             return res.status(422).json({message:"Email is already registered"});
         }
-        const user = new User({name, email, phone, work, password, cpassword});
-        const userRegistered = await user.save();
-        if(userRegistered){
+        else if(password != cpassword){
+            return res.status(422).json({message:"Password not matching"});
+        }
+        else{
+            const user = new User({name, email, phone, work, password, cpassword});
+            //middleware for hashing password will be called here before saving registered user
+            await user.save();
             return res.status(201).json({message:"User Registered Successfully"});
         }
     }
@@ -30,21 +34,25 @@ router.post("/register",async (req,res)=>{
     
 });
 
-router.post("/sigin",(req,res)=>{
+router.post("/sigin",async (req,res)=>{
     const {email,password} = req.body;
     if(!email || !password){
         return res.status(422).json({message:"Fill all the required fields"});
     }
-    User.findOne({email:email})
-    .then((userExist)=>{
+    try{
+        const userExist = await User.findOne({email:email});
         if(userExist){
            if(password === userExist.password){
-               return res.status(200).json({message:"Login successfully"});
+            return res.status(201).json({message:"Login successfully"})
            }
-           return res.status(422).json({message:"Invalid username or password"});
+        return res.status(422).json({message:"Invalid username or password"});
         }
         return res.status(422).json({message:"User is not registered"});
-    })
+    }
+    catch(err){
+        console.log(err);
+        return res.status(422).json({Error:err});
+    }
 });
 
 module.exports = router;
