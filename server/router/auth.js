@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bycrpt = require("bcrypt");
 
+
 require("../db/conn");
 const User = require("../models/userSchema");
 
@@ -44,6 +45,8 @@ router.post("/sigin",async (req,res)=>{
         const userExist = await User.findOne({email:email});
         if(userExist){
            const isMatch = await bycrpt.compare(password, userExist.password);
+           const token = await userExist.generateAuthToken();
+           console.log(token);
            if(isMatch){
                return res.status(201).json({message:"User Logged in Successfully"})
            }
