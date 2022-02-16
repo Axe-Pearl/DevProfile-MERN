@@ -46,6 +46,10 @@ router.post("/sigin",async (req,res)=>{
         if(userExist){
            const isMatch = await bycrpt.compare(password, userExist.password);
            const token = await userExist.generateAuthToken();
+           res.cookie("jwttoken",token,{
+               expires: new Date(Date.now() + 25892000000),
+               httpOnly:true
+           });
            console.log(token);
            if(isMatch){
                return res.status(201).json({message:"User Logged in Successfully"})
