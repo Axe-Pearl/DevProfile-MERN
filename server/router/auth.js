@@ -27,6 +27,7 @@ router.post("/register",async (req,res)=>{
             const user = new User({name, email, phone, work, password, cpassword});
             //middleware for hashing password will be called here before saving registered user
             await user.save();
+            console.log("User saved");
             return res.status(201).json({message:"User Registered Successfully"});
         }
     }

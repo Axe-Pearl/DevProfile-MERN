@@ -7,3 +7,9 @@
   width: 300px;
   margin: 10px;
 }
+
+.signupBtn{
+  background-color: rgb(54, 85, 7);
+  width: 200px;
+  height: 30px;
+}
