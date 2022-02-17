@@ -18,7 +18,7 @@ function Register() {
    e.preventDefault();
    const { name, email, phone, work, password, cpassword} = user;
    console.log("working from frontend");
-   const res = await fetch("http://localhost:3000/register",{
+   const res = await fetch("/register",{
      method:"POST",
 
      headers:{
