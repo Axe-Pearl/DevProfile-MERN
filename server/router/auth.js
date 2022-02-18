@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bycrpt = require("bcrypt");
-
+const authenticate = require("../middleware/authenticate");
 
 require("../db/conn");
 const User = require("../models/userSchema");
@@ -37,11 +37,11 @@ router.post("/register",async (req,res)=>{
     
 });
 
-router.post("/sigin",async (req,res)=>{
+router.post("/login",async (req,res)=>{
     try{
         const {email,password} = req.body;
         if(!email || !password){
-            return res.status(422).json({message:"Fill all the required fields"});
+            return res.status(400).json({message:"Fill all the required fields"});
         }
         const userExist = await User.findOne({email:email});
         if(userExist){
@@ -51,18 +51,27 @@ router.post("/sigin",async (req,res)=>{
                expires: new Date(Date.now() + 25892000000),
                httpOnly:true
            });
-           console.log(token);
+           console.log("token is:" ,token);
            if(isMatch){
                return res.status(201).json({message:"User Logged in Successfully"})
            }
-           return res.status(422).json({message:"Invalid Credentials"});
+           return res.status(400).json({message:"Invalid Credentials"});
         }
-        return res.status(422).json({message:"User does not exist"});
+        return res.status(400).json({message:"User does not exist"});
     }
     catch(err){
         console.log(err);
-        return res.status(422).json({Error:err});
+        return res.status(400).json({Error:err});
     }
 });
+
+router.get("/about",authenticate,(req,res)=>{
+    console.log("Hey this is about page");
+    res.send(req.rootUser);
+});
+
+
+
+
 
 module.exports = router;

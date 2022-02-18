@@ -35,7 +35,7 @@ function Register() {
    else{
      console.log("data was as follows:",data);
      console.log(data.message);
-     navigate("/");
+     navigate("/login");
    }
  }
   return (
